@@ -1,10 +1,14 @@
 <template>
   <div class="h-screen flex justify-center items-center">
-    <div class="relative max-w-xl w-full">
+    <div class="relative max-w-xl w-full p-3">
+      <div class="mb-2 flex justify-between">
+        <span>{{ labels[0] }}</span>
+        <span>{{ labels[1] }}</span>
+      </div>
       <div>
         <input
           type="range"
-          step="100"
+          :step="step"
           :min="min"
           :max="max"
           @input="minTrigger"
@@ -24,7 +28,7 @@
         <input
           type="range"
           @input="maxTrigger"
-          step="100"
+          :step="step"
           :min="min"
           :max="max"
           v-model="maxValue"
@@ -118,26 +122,27 @@
 
 <script>
 export default {
+  emits: ['update:modelValue'],
   props: {
     labels: {
       type: Array,
-      default: () => ['Bad', 'Good'],
+      default: () => ['', ''],
     },
     min: {
       type: Number,
-      default: 100,
-    },
-    max: {
-      type: Number,
-      default: 10000,
+      required: true,
     },
     step: {
       type: Number,
-      default: 1,
+      required: true,
     },
-    values: {
+    modelValue: {
       type: Array,
-      default: () => [0, 0],
+      required: true,
+    },
+    max: {
+      type: Number,
+      required: true,
     },
   },
   data() {
@@ -149,11 +154,11 @@ export default {
     };
   },
   mounted() {
-    this.init();
-    if (this.values[0] > 0 || this.values[1] > 0) {
-      this.minValue = this.values[0];
-      this.maxValue = this.values[1];
+    if (this.modelValue[0] > 0 || this.modelValue[1] > 0) {
+      this.minValue = this.modelValue[0];
+      this.maxValue = this.modelValue[1];
     }
+    this.init();
   },
   methods: {
     init() {
@@ -161,16 +166,18 @@ export default {
       this.maxTrigger();
     },
     minTrigger() {
-      this.minValue = Math.min(this.minValue, this.maxValue - 500);
+      //max value'yi geçmemesi için. Sondaki eksi de aralarındaki mesafeyi ayarlamak için
+      this.minValue = Math.min(this.minValue, this.maxValue - 300);
       this.minThumb =
         ((this.minValue - this.min) / (this.max - this.min)) * 100;
-      this.$emit('input', [this.minValue, this.maxValue]);
+      this.$emit('update:modelValue', [this.minValue, this.maxValue]);
     },
     maxTrigger() {
-      this.maxValue = Math.max(this.maxValue, this.minValue + 500);
+      //min value'den daha düşük olmaması için.
+      this.maxValue = Math.max(this.maxValue, this.minValue + 300);
       this.maxThumb =
         100 - ((this.maxValue - this.min) / (this.max - this.min)) * 100;
-      this.$emit('input', [this.minValue, this.maxValue]);
+      this.$emit('update:modelValue', [this.minValue, this.maxValue]);
     },
   },
 };

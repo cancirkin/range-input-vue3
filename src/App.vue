@@ -6,13 +6,20 @@ export default {
   },
   data() {
     return {
-      data: [1500, 4000],
+      data: [1700, 4000],
+      labels: ['Min', 'Max'],
     };
   },
 };
 </script>
 
 <template>
-  <RangeInput :v-model="data"></RangeInput>
+  <RangeInput
+    v-model="data"
+    :min="100"
+    :max="5000"
+    :step="100"
+    :labels="labels"
+  ></RangeInput>
 </template>
 
