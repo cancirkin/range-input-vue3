@@ -6,7 +6,7 @@ export default {
   },
   data() {
     return {
-      data: [1700, 4000],
+      data: [4, 8],
       labels: ['Min', 'Max'],
     };
   },
@@ -16,9 +16,9 @@ export default {
 <template>
   <RangeInput
     v-model="data"
-    :min="100"
-    :max="5000"
-    :step="100"
+    :min="1"
+    :max="10"
+    :step="1"
     :labels="labels"
   ></RangeInput>
 </template>
